@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="eng">
+<head>
+  <title>Orders</title>
+  <%-include('./partials/head.ejs')%>
+</head>
+
+<body>
+  <%-include('./partials/navbar.ejs')%>
+
+  <div class="container-fluid pt-5 pb-3 mt-5 mb-3">
+    <h class="pr-3" style="display:inline; float: inline-start;"><h2 class="d-inline">Orders</h2><h6 class="p-2 text-muted d-inline">Manage orders</h6></h>
+    <h class="p-3" style="display:inline; float: inline-end;"><a href="/" style="text-decoration: none; color: black;"><h6 class="d-inline">Home</h6></a><h6 class="d-inline text-muted"> / Orders</h6></h>
+  </div>
+
+  <div class="container-fluid">
+      <div class="row px-3 py-1 w-100 text-light text-center">
+        <span class="col py-1 bg-dark">Id</span>
+        <span class="col py-1 bg-dark">Order Number</span>
+        <span class="col py-1 bg-dark">User Id</span>
+        <span class="col py-1 bg-dark">Membership</span>
+        <span class="col py-1 bg-dark">Total</span>
+        <span class="col py-1 bg-dark">Order Status</span>
+        <span class="col py-1 bg-dark">Created</span>
+        <span class="col py-1 bg-dark">Updated</span>
+        <span class="col py-1 bg-dark">Options</span>
+      </div>
+
+      <%if(orders) {%>
+        <%orders.forEach(function(order) {%>
+          <div class="row px-3 py-1 w-100 text-center align-middle">
+            <span class="col py-1 bg-light text-center align-middle">
+              <%=order.orderid%>
+            </span>
+            <span class="col py-1 bg-light text-center align-middle">
+              <%=order.ordernumber%>
+            </span>
+            <span class="col py-1 bg-light text-center align-middle">
+              <%=order.userid%>
+            </span>
+            <%if (order.membershipid === 1) {%>
+              <span class="col py-1 bg-light text-center align-middle"><span style="background-color: #CD7F32;" class="badge">Bronze</span></span>
+            <%} else if (order.membershipid === 2) {%>
+              <span class="col py-1 bg-light text-center align-middle"><span style="background-color: #C0C0C0;" class="badge">Silver</span></span>
+            <%} else if (order.membershipid === 3) {%>
+              <span class="col py-1 bg-light text-center align-middle"><span style="background-color: #FFD700;" class="badge">Gold</span></span>
+            <%}%>
+            <span class="col py-1 bg-light text-center align-middle">
+              <%=order.total%>
+            </span>
+            <%if (order.orderstatusid === 1) {%>
+              <span class="col py-1 bg-light text-center align-middle"><span class="badge text-bg-danger">In Progress</span></span>
+            <%} else if (order.orderstatusid === 2) {%>
+              <span class="col py-1 bg-light text-center align-middle"><span class="badge text-bg-warning">Ordered</span></span>
+            <%} else if (order.orderstatusid === 3) {%>
+              <span class="col py-1 bg-light text-center align-middle"><span class="badge text-bg-success">Completed</span></span>
+            <%}%>
+            <span class="col py-1 bg-light text-center align-middle">
+              <%=new Date(order.createdAt).toLocaleString()%>
+            </span>
+            <span class="col py-1 bg-light text-center align-middle">
+              <%=new Date(order.updatedAt).toLocaleString()%>
+            </span>
+            <span class="col py-1 bg-light text-center">
+              <button class="btn btn-sm btn-outline-dark" type="button" data-bs-toggle="modal" data-bs-target="#modal<%=order.orderid%>"><i class="bi bi-pencil-fill"></i></button>
+            </span>
+          </div>
+  
+          <div class="modal fade" tabindex="-1" role="dialog" id="modal<%=order.orderid%>">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Edit order details</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal">
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <form action="javascript: changeOrder(
+                    $('#orderNumberEdit<%=order.orderid%>').val(), 
+                    $('#orderStatusEdit<%=order.orderid%>').val(),
+                    '<%=token%>'
+                  )">
+                    <div class="mb-3">
+                      <label for="orderNumberEdit<%=order.orderid%>" class="col-form-label">Order Number</label>
+                      <input id="orderNumberEdit<%=order.orderid%>" name="orderNumberEdit<%=order.orderid%>" class="form-control" value="<%=order.ordernumber%>" disabled readonly>
+                    </div>
+  
+                    <div class="mb-3">
+                      <label for="orderStatusEdit<%=order.orderid%>" class="col-form-label">Order Status</label>
+                      <select id="orderStatusEdit<%=order.orderid%>" name="orderStatusEdit<%=order.orderid%>" class="form-select">
+                          <%statuses.forEach(function(status) {%>
+                            <%if (order.orderstatusid === status.orderstatusid) {%>
+                              <option value="<%=status.orderstatusid%>" selected><%=status.orderstatus%></option>
+                            <%} else {%>
+                              <option value="<%=status.orderstatusid%>"><%=status.orderstatus%></option>
+                            <%};%>  
+                          <%});%>
+                      </select>
+                    </div>
+                    
+                    <div class="modal-footer">
+                      <button type="submit" class="btn btn-primary">Save changes</button>
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        <%});%>
+      <%} else {%>
+        <div class="row px-3 py-1 w-100">
+          <span class="col py-1"></span>
+          <span class="col py-1"></span>
+          <span class="col py-1"></span>
+          <span class="col py-1"></span>
+          <span class="col py-1"></span>
+          <span class="col py-1"></span>
+          <span class="col py-1"></span>
+          <span class="col py-1"></span>
+          <span class="col py-1"></span>
+        </div>
+      <%}%>
+
+      <div class="row px-3 py-2 w-100 text-center">
+        <hr>
+      </div>
+  </div>
+  <%-include('./partials/scripts.ejs')%>
+</body>
+</html>

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="eng">
+<head>
+  <title>Products</title>
+  <%-include('./partials/head.ejs')%>
+</head>
+
+<body>
+  <%-include('./partials/navbar.ejs')%>
+
+  <div class="container-fluid pt-5 pb-3 mt-5 mb-3">
+    <h class="pr-3" style="display:inline; float: inline-start;"><h2 class="d-inline">Products</h2><h6 class="p-2 text-muted d-inline">Manage products</h6></h>
+    <h class="p-3" style="display:inline; float: inline-end;"><a href="/" style="text-decoration: none; color: black;"><h6 class="d-inline">Home</h6></a><h6 class="d-inline text-muted"> / Products</h6></h>
+  </div>
+
+  <%if(products) {%>
+    <div class="container-fluid pt-3 mt-3" style="display:inline; float: inline-end;">
+      <form action="/admin/products" method="get">
+        <div class="pe-3" style="display:inline-block;">
+          <label class="d-block fw-bold" for="product">Name</label>
+          <input class="form-control" id="product" name="product" type="text" placeholder="Product name">
+        </div>
+    
+        <div class="pe-3" style="display:inline-block;">
+          <label class="d-block fw-bold" for="categories">Categories</label>
+          <select class="form-select" id="categories" name="categories">
+              <option value="" data-hidden="true">None</option>
+              <%categories.forEach(function(category) {%>
+                  <option value="<%=category.category%>"><%=category.category%></option>
+              <%});%>
+          </select>
+        </div>
+    
+        <div class="pe-5" style="display:inline-block;">
+          <label class="d-block fw-bold" for="brands">Brands</label>
+          <select class="form-select" id="brands" name="brands">
+              <option value="" data-hidden="true">None</option>
+              <%brands.forEach(function(brand) {%>
+                  <option value="<%=brand.brand%>"><%=brand.brand%></option>
+              <%});%>
+          </select>
+        </div>
+  
+        <div class="pe-2" style="display:inline-block;">
+          <button id="submit" type="submit" class="btn btn-outline-dark d-block"><i class="bi bi-search"></i> Search</button>
+        </div>
+  
+        <div style="display:inline-block;">
+          <button id="submit" type="button" onclick="location.href='http://localhost:3000/admin/products';" class="btn btn-outline-dark d-block"><i class="bi bi-arrow-clockwise"></i> Clear</button>
+        </div>
+      </form>
+      
+      <div class="pe-4 pb-1" style="display:inline; float: inline-end;">
+        <button id="submit" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAdd"><i class="bi bi-plus-lg"></i> Add</button>
+      </div>
+    </div>
+  
+    <div class="modal fade" tabindex="-1" role="dialog" id="modalAdd">
+      <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Add a new product</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal">
+            </button>
+          </div>
+          <div class="modal-body">
+            <form action="javascript: addProduct(
+              $('#nameAdd').val(), 
+              $('#descriptionAdd').val(), 
+              $('#priceAdd').val(), 
+              $('#imgUrlAdd').val(), 
+              $('#quantityAdd').val(),
+              $('#brandAdd').val(), 
+              $('#categoryAdd').val(), 
+              '<%=token%>'
+            )">
+              <div class="mb-3">
+                <label for="nameAdd" class="col-form-label">Name</label>
+                <input  id="nameAdd" name="nameAdd" class="form-control" minlength="1" maxlength="255" required>
+              </div>
+  
+              <div class="mb-3">
+                <label for="brandAdd" class="col-form-label">Brand</label>
+                <select id="brandAdd" name="brandAdd" class="form-select" required>
+                    <%brands.forEach(function(brand) {%>
+                      <option value="<%=brand.brandid%>"><%=brand.brand%></option>  
+                    <%});%>
+                </select>
+              </div>
+  
+              <div class="mb-3">
+                <label for="categoryAdd" class="col-form-label">Category</label>
+                <select id="categoryAdd" name="categoryAdd" class="form-select" required>
+                    <%categories.forEach(function(category) {%>
+                      <option value="<%=category.categoryid%>"><%=category.category%></option>
+                    <%});%>
+                </select>
+              </div>
+  
+              <div class="mb-3">
+                <label for="descriptionAdd" class="col-form-label">Description</label>
+                <input id="descriptionAdd" name="descriptionAdd" class="form-control" minlength="1" maxlength="255" required>
+              </div>
+  
+              <div class="mb-3">
+                <label for="quantityAdd" class="col-form-label">Quantity</label>
+                <input id="quantityAdd" name="quantityAdd" class="form-control" type="number" min="0" required>
+              </div>
+  
+              <div class="mb-3">
+                <label for="priceAdd" class="col-form-label">Price</label>
+                <input id="priceAdd" name="priceAdd" class="form-control" type="number" min="0" step="0.01" required>
+              </div>
+  
+              <div class="mb-3">
+                <label for="imgUrlAdd" class="col-form-label">Image URL</label>
+                <input id="imgUrlAdd" name="imgUrlAdd" class="form-control" minlength="1" maxlength="255" required>
+              </div>
+  
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Add product</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  <%}%>
+
+  <div class="container-fluid">
+      <div class="row px-3 py-1 w-100 text-light text-center">
+        <span class="col py-1 bg-dark">Id</span>
+        <span class="col py-1 bg-dark">Image</span>
+        <span class="col-3 py-1 bg-dark">Name</span>
+        <span class="col-3 py-1 bg-dark">Description</span>
+        <span class="col py-1 bg-dark">Quantity</span>
+        <span class="col py-1 bg-dark">Price</span>
+        <span class="col py-1 bg-dark">Brand</span>
+        <span class="col py-1 bg-dark">Category</span>
+        <span class="col py-1 bg-dark">Available</span>
+        <span class="col py-1 bg-dark">Options</span>
+      </div>
+
+      <%if(products) {%>
+        <%products.forEach(function(product) {%>
+          <div class="row px-3 py-1 w-100 text-center align-middle">
+            <span class="col py-1 bg-light text-center align-middle">
+              <%=product.productid%>
+            </span>
+            <span class="col py-1 bg-light text-center align-middle">
+              <img src="<%=product.imgurl%>" alt="<%=product.product%>" style="width: 30%;">
+            </span>
+            <span class="col-3 py-1 bg-light text-center align-middle">
+              <%=product.product%>
+            </span>
+            <span class="col-3 py-1 bg-light text-center align-middle">
+              <%=product.description%>
+            </span>
+            <span class="col py-1 bg-light text-center align-middle">
+              <%=product.quantity%>
+            </span>
+            <span class="col py-1 bg-light text-center align-middle">
+              <%=product.unitprice%>
+            </span>
+            <span class="col py-1 bg-light text-center align-middle">
+              <%=product.brand%>
+            </span>
+            <span class="col py-1 bg-light text-center align-middle">
+              <%=product.category%>
+            </span>
+            <span class="col py-1 bg-light text-center align-middle">
+              <%=product.isdeleted ? "No" : "Yes"%>
+            </span>
+            <span class="col py-1 bg-light text-center">
+              <button class="btn btn-sm btn-outline-dark" type="button" data-bs-toggle="modal" data-bs-target="#modal<%=product.productid%>"><i class="bi bi-pencil-fill"></i></button>
+              <button class="btn btn-sm btn-outline-dark" type="button" onclick="deleteProduct('<%=product.productid%>', '<%=token%>')"><i class="bi bi-trash3-fill"></i></button>
+            </span>
+          </div>
+  
+          <div class="modal fade" tabindex="-1" role="dialog" id="modal<%=product.productid%>">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Edit product details</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal">
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <form action="javascript: changeProduct(
+                    $('#idEdit<%=product.productid%>').val(), 
+                    $('#nameEdit<%=product.productid%>').val(), 
+                    $('#descriptionEdit<%=product.productid%>').val(), 
+                    $('#priceEdit<%=product.productid%>').val(), 
+                    $('#imgUrlEdit<%=product.productid%>').val(), 
+                    $('#quantityEdit<%=product.productid%>').val(), 
+                    $('#availableOrNot<%=product.productid%>')[0].checked, 
+                    $('#brandEdit<%=product.productid%>').val(), 
+                    $('#categoryEdit<%=product.productid%>').val(), 
+                    '<%=token%>'
+                  )">
+                    <div class="mb-3">
+                      <label for="idEdit<%=product.productid%>" class="col-form-label">Id</label>
+                      <input id="idEdit<%=product.productid%>" name="idEdit<%=product.productid%>" class="form-control" value="<%=product.productid%>" disabled readonly>
+                    </div>
+  
+                    <div class="mb-3">
+                      <label for="nameEdit<%=product.productid%>" class="col-form-label">Name</label>
+                      <input  id="nameEdit<%=product.productid%>" name="nameEdit<%=product.productid%>" class="form-control" minlength="1" maxlength="255" value="<%=product.product%>" required>
+                    </div>
+  
+                    <div class="mb-3">
+                      <label for="brandEdit<%=product.productid%>" class="col-form-label">Brand</label>
+                      <select id="brandEdit<%=product.productid%>" name="brandEdit<%=product.productid%>" class="form-select">
+                          <%brands.forEach(function(brand) {%>
+                            <%if (product.brandid === brand.brandid) {%>
+                              <option value="<%=brand.brandid%>" selected><%=brand.brand%></option>
+                            <%} else {%>
+                              <option value="<%=brand.brandid%>"><%=brand.brand%></option>
+                            <%};%>  
+                          <%});%>
+                      </select>
+                    </div>
+  
+                    <div class="mb-3">
+                      <label for="categoryEdit<%=product.productid%>" class="col-form-label">Category</label>
+                      <select id="categoryEdit<%=product.productid%>" name="categoryEdit<%=product.productid%>" class="form-select">
+                          <%categories.forEach(function(category) {%>
+                            <%if (product.categoryid === category.categoryid) {%>
+                              <option value="<%=category.categoryid%>" selected><%=category.category%></option>
+                            <%} else {%>
+                              <option value="<%=category.categoryid%>"><%=category.category%></option>
+                            <%};%>
+                          <%});%>
+                      </select>
+                    </div>
+  
+                    <div class="mb-3">
+                      <label for="descriptionEdit<%=product.productid%>" class="col-form-label">Description</label>
+                      <input id="descriptionEdit<%=product.productid%>" name="descriptionEdit<%=product.productid%>" class="form-control" minlength="1" maxlength="255" value="<%=product.description%>" required>
+                    </div>
+  
+                    <div class="mb-3">
+                      <label for="quantityEdit<%=product.productid%>" class="col-form-label">Quantity</label>
+                      <input id="quantityEdit<%=product.productid%>" name="quantityEdit<%=product.productid%>" class="form-control" type="number" min="0" value="<%=product.quantity%>" required>
+                    </div>
+  
+                    <div class="mb-3">
+                      <label for="priceEdit<%=product.productid%>" class="col-form-label">Price</label>
+                      <input id="priceEdit<%=product.productid%>" name="priceEdit<%=product.productid%>" class="form-control" type="number" min="0" step="0.01" value="<%=product.unitprice%>" required>
+                    </div>
+  
+                    <div class="mb-3">
+                      <label for="imgUrlEdit<%=product.productid%>" class="col-form-label">Image URL</label>
+                      <input id="imgUrlEdit<%=product.productid%>" name="imgUrlEdit<%=product.productid%>" class="form-control" minlength="1" maxlength="255" value="<%=product.imgurl%>" required>
+                    </div>
+  
+                    <div class="mb-3">
+                      <div class="form-check form-switch">
+                        <%if (product.isdeleted) {%>
+                          <input class="form-check-input" type="checkbox" role="switch" value="no" id="availableOrNot<%=product.productid%>">
+                        <%} else {%>
+                          <input type="checkbox" class="form-check-input" role="switch" value="yes" id="availableOrNot<%=product.productid%>" checked>
+                        <%}%>
+                        <label class="form-check-label" for="availableOrNot<%=product.productid%>">Availability</label>
+                      </div>
+                    </div>
+                    
+                    <div class="modal-footer">
+                      <button type="submit" class="btn btn-primary">Save changes</button>
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        <%});%>
+      <%} else {%>
+        <div class="row px-3 py-1 w-100">
+          <span class="col py-1"></span>
+          <span class="col py-1"></span>
+          <span class="col py-1"></span>
+          <span class="col py-1"></span>
+          <span class="col py-1"></span>
+          <span class="col py-1"></span>
+          <span class="col py-1"></span>
+          <span class="col py-1"></span>
+          <span class="col py-1"></span>
+          <span class="col py-1"></span>
+        </div>
+      <%}%>
+
+      <div class="row px-3 py-2 w-100 text-center">
+        <hr>
+      </div>
+  </div>
+
+  <div class="modal fade" tabindex="-1" role="dialog" id="modalDuplicateError">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Error</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal">
+          </button>
+        </div>
+        <div class="modal-body">
+          <h>There already exists such product, try a different name.</h>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <%-include('./partials/scripts.ejs')%>
+</body>
+</html>

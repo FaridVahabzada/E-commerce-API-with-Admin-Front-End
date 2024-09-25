@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="eng">
+<head>
+    <title>Admin Login</title>
+    <%-include('./partials/head.ejs')%>
+</head>
+
+<body style="overflow: hidden;">
+    <%if (currentUser) {%>
+        <%- include('./partials/navbar.ejs') %>
+        <div class="row align-items-center vh-100">
+            <div class="col-8">
+                <div>
+                    <img class="object-fit-cover w-100 vh-100" src="../img/admin.jpg" alt="Login page">
+                </div>
+            </div>
+            <div class="col-4">
+                <div>
+                    <div class="form-group col-md-7 mx-auto mb-3"></divclass>
+                        <h><i class="bi bi-gem" style="font-size: 2rem; color: rgb(10, 10, 11);"></i> <span class="fs-2 fw-bold">Admin</span> Front-End</h>
+                    </div>
+                    <div class="form-group col-md-7 mx-auto mb-3"></divclass>
+                        <h><span style="font-size: 18px;">You are currently logged in as </span><span class="fs-4 fw-bold"><%=currentUser%></span><span style="font-size: 18px;">!</span></h>
+                    </div>
+                    <div class="d-grid gap-2 col-7 mx-auto">
+                        <button type="submit" class="btn btn-dark" onclick="logOut()">Sign me out!</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <%} else {%>
+        <div class="row align-items-center vh-100">
+            <div class="col-8">
+                <div>
+                    <img class="object-fit-cover w-100 vh-100" src="../img/admin.jpg" alt="Login page">
+                </div>
+            </div>
+            <div class="col-4">
+                <div>
+                    <div class="form-group col-md-7 mx-auto mb-3"></divclass>
+                        <h><i class="bi bi-gem" style="font-size: 2rem; color: rgb(10, 10, 11);"></i> <span class="fs-2 fw-bold">Admin</span> Front-End</h>
+                    </div>
+                    <form action="javascript: logIn($('#usernameOrEmail').val(), $('#password').val())">
+                      <div class="form-group col-md-7 mx-auto mb-3">
+                        <label for="usernameOrEmail" class="col-form-label fw-bold">Username / Email address</label>
+                        <input  id="usernameOrEmail" name="usernameOrEmail" class="form-control" minlength="1" maxlength="255" required>
+                      </div>
+                
+                      <div class="form-group col-md-7 mx-auto mb-3">
+                        <label for="password" class="col-form-label fw-bold">Password</label>
+                        <input id="password" name="password" type="password" class="form-control" minlength="1" maxlength="255"  autocomplete="off" required>
+                      </div>
+                
+                      <div class="d-grid gap-2 col-7 mx-auto">
+                        <button type="submit" class="btn btn-dark">Sign me in</button>
+                      </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    <%}%>
+
+    <div class="modal fade" tabindex="-1" role="dialog" id="modalLoginError">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Error</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal">
+            </button>
+          </div>
+          <div class="modal-body">
+            <h>The username / email or password is not correct, could not authenticate the user. Please, try again.</h>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" tabindex="-1" role="dialog" id="modalUnauthorizedError">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Error</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal">
+            </button>
+          </div>
+          <div class="modal-body">
+            <h>Only users with admin privileges can log in. You are not authorized!</h>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <%-include('./partials/scripts.ejs')%>
+</body>
+</html>

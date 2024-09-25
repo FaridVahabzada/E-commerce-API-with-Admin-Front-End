@@ -1,0 +1,1883 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "E-commerce API",
+    "description": "<h2>To be able to bypass the JWT authentication for the endpoints needing authorization,         login first, then use the token recieved, press the <b>Authorize</b> button and type 'Bearer ' and paste the token copied.         After, you can access the enpoints requiring authorization without filling the <b>Authorization</b> field.</h2>"
+  },
+  "host": "localhost:3000",
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ],
+  "securityDefinitions": {
+    "bearerAuth": {
+      "type": "apiKey",
+      "in": "header",
+      "name": "Authorization"
+    }
+  },
+  "paths": {
+    "/init": {
+      "post": {
+        "tags": [
+          "Utility Endpoints"
+        ],
+        "description": "<h3>Populates the database, if database is empty.</h3>",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/search": {
+      "post": {
+        "tags": [
+          "Utility Endpoints"
+        ],
+        "description": "<h3>Searches the product list on validated parameters provided in the request's body.</h3>",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/productSearch"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "Login & Registration"
+        ],
+        "description": "<h3>Logins a user based on validated parameters provided in the request's body. (Also creates token cookie (if user is admin) or clears cookies (if user is not admin).)</h3>",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/userLogin"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "tags": [
+          "Login & Registration"
+        ],
+        "description": "<h3>Registers a new user (and creates a new cart) based on validated parameters provided in the request's body.</h3>",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/newUserRegister"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "tags": [
+          "The User Table Endpoints"
+        ],
+        "description": "<h3>Gets the user list if user is authorized and admin. (If user id is present in the request's body, then returns only the user, if found. Not the whole user list. Not demonstrated here!)</h3>",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "The User Table Endpoints"
+        ],
+        "description": "<h3>If user is authorized and admin, changes a user based on validated parameters provided in the request's body.</h3>",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/userChange"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "The User Table Endpoints"
+        ],
+        "description": "<h3>If user is authorized and admin, removes a user based on validated parameters provided in the request's body. This happens only if user to be removed is not admin and has no carts or orders.</h3>",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/userDelete"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/categories/": {
+      "get": {
+        "tags": [
+          "The Category Table Endpoints"
+        ],
+        "description": "<h3>Gets the category list.</h3>",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "The Category Table Endpoints"
+        ],
+        "description": "<h3>If user is authorized and admin, creates a category based on validated parameters provided in the request's body.</h3>",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/categoryCreate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "The Category Table Endpoints"
+        ],
+        "description": "<h3>If user is authorized and admin, changes a category based on validated parameters provided in the request's body.</h3>",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/categoryChange"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "The Category Table Endpoints"
+        ],
+        "description": "<h3>If user is authorized and admin, removes a category based on validated parameters provided in the request's body. This happens only if there are no products with this category.</h3>",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/categoryDelete"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/brands/": {
+      "get": {
+        "tags": [
+          "The Brand Table Endpoints"
+        ],
+        "description": "<h3>Gets the brand list.</h3>",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "The Brand Table Endpoints"
+        ],
+        "description": "<h3>If user is authorized and admin, creates a brand based on validated parameters provided in the request's body.</h3>",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/brandCreate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "The Brand Table Endpoints"
+        ],
+        "description": "<h3>If user is authorized and admin, changes a brand based on validated parameters provided in the request's body.</h3>",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/brandChange"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "The Brand Table Endpoints"
+        ],
+        "description": "<h3>If user is authorized and admin, removes a brand based on validated parameters provided in the request's body. This happens only if there are no products with this brand.</h3>",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/brandDelete"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/roles/": {
+      "get": {
+        "tags": [
+          "The Role Table Endpoints"
+        ],
+        "description": "<h3>Gets the role list.</h3>",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "The Role Table Endpoints"
+        ],
+        "description": "<h3>If user is authorized and admin, creates a role based on validated parameters provided in the request's body.</h3>",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/roleCreate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "The Role Table Endpoints"
+        ],
+        "description": "<h3>If user is authorized and admin, changes a role based on validated parameters provided in the request's body. This only happens if it is not a default role.</h3>",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/roleChange"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "The Role Table Endpoints"
+        ],
+        "description": "<h3>If user is authorized and admin, removes a role based on validated parameters provided in the request's body. This happens only if it is not a default role or no users have it.</h3>",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/roleDelete"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/memberships/": {
+      "get": {
+        "tags": [
+          "The Membership Table Endpoints"
+        ],
+        "description": "<h3>Gets the membership list.</h3>",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "The Membership Table Endpoints"
+        ],
+        "description": "<h3>If user is authorized and admin, creates a membership based on validated parameters provided in the request's body.</h3>",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/membershipCreate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "The Membership Table Endpoints"
+        ],
+        "description": "<h3>If user is authorized and admin, changes a membership based on validated parameters provided in the request's body. This only happens if it is not a default membership.</h3>",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/membershipChange"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "The Membership Table Endpoints"
+        ],
+        "description": "<h3>If user is authorized and admin, removes a membership based on validated parameters provided in the request's body. This happens only if it is not a default membership or there are no users with this membership.</h3>",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/membershipDelete"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/products/": {
+      "get": {
+        "tags": [
+          "The Product Table Endpoints"
+        ],
+        "description": "<h3>Gets the product list.</h3>",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "The Product Table Endpoints"
+        ],
+        "description": "<h3>If user is authorized and admin, creates a product based on validated parameters provided in the request's body.</h3>",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/productCreate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "The Product Table Endpoints"
+        ],
+        "description": "<h3>If user is authorized and admin, changes a product based on validated parameters provided in the request's body. When this happens if product's unit price is changed then all cart items related to this product in users' active carts get updated prices. Or if product is soft deleted or quantity equalled to zero then all cart items related to this product in users' active carts get removed.</h3>",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/productChange"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "The Product Table Endpoints"
+        ],
+        "description": "<h3>If user is authorized and admin, removes a product based on validated parameters provided in the request's body. When this happens then all cart items related to this product in users' active carts get removed, if this product is present.</h3>",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/productDelete"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/cart/": {
+      "get": {
+        "tags": [
+          "The Cart & Cart Item Tables Endpoints"
+        ],
+        "description": "<h3>Gets aunthenticated user's active cart with all the cart items in it.</h3>",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "The Cart & Cart Item Tables Endpoints"
+        ],
+        "description": "<h3>If user is authorized, adds a cart item to their cart based on validated parameters provided in the request's body. Also, calculates the total cost based on quantity and discount, checks for duplicate items if so updates quantity accordingly, depending on the product quantity availability makes quantitative decisions.</h3>",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/cartItemCreate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "The Cart & Cart Item Tables Endpoints"
+        ],
+        "description": "<h3>If user is authorized, makes changes to cart item's quantity in their active cart based on validated parameters provided in the request's body. Also, checks if the cart is the active one, makes decisions based on available product quantity, recalculates the total cost based on quantity and discount.</h3>",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/cartItemQuantiyChange"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "The Cart & Cart Item Tables Endpoints"
+        ],
+        "description": "<h3>If user is authorized, removes a cart item from their active cart based on validated parameters provided in the request's body. Also, checks if the cart is the active one, recalculates the total cost based on quantity and discount.</h3>",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/cartItemDelete"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/cart/checkout/now": {
+      "post": {
+        "tags": [
+          "The Cart & Cart Item Tables Endpoints"
+        ],
+        "description": "<h3>If user is authorized, checks out a cart with its items based on validated parameters provided in the request's body. Also, if there are no items inside the active cart cancels the operation, checks again if enough product availability is present, recalculates the total cost based on quantity and discount before the check-out, creates unique order number, creates order and order items, updates users membership status, soft deletes the cart with its items, creates a new cart, updates product quantity and much more...</h3>",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/orders/": {
+      "get": {
+        "tags": [
+          "The Order & Order Item Tables Endpoints"
+        ],
+        "description": "<h3>Gets aunthenticated user's all orders with all the order items or if the authenticated user has an admin role then all the users' order history with the related order items.</h3>",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "The Order & Order Item Tables Endpoints"
+        ],
+        "description": "<h3>If user is authorized and admin, if given ordernumber exists, makes changes to order's status based on validated parameters provided in the request's body.</h3>",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/orderStatusUpdate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/orderstatuses/": {
+      "get": {
+        "tags": [
+          "The Order Status Table Endpoints"
+        ],
+        "description": "<h3>Gets the order status list.</h3>",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "The Order Status Table Endpoints"
+        ],
+        "description": "<h3>If user is authorized and admin, creates an order status based on validated parameters provided in the request's body.</h3>",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/orderStatusCreate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "The Order Status Table Endpoints"
+        ],
+        "description": "<h3>If user is authorized and admin, changes an order status based on validated parameters provided in the request's body. This only happens if it is not a default order status.</h3>",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/orderStatusChange"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "The Order Status Table Endpoints"
+        ],
+        "description": "<h3>If user is authorized and admin, removes an order status based on validated parameters provided in the request's body. This happens only if it is not a default order status or there are no orders with this order status.</h3>",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/orderStatusDelete"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/": {
+      "get": {
+        "tags": [
+          "The Admin Front-End Endpoints"
+        ],
+        "description": "<h3>Renders the login page. If the token owner has an admin role, then the logout page, aka <b>the Home page</b>.</h3>",
+        "produces": [
+          "text/html"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/logout": {
+      "get": {
+        "tags": [
+          "The Admin Front-End Endpoints"
+        ],
+        "description": "<h3>Logs out a user if the token owner has an admin role. If not admin then returns the login page back to the user.</h3>",
+        "produces": [
+          "text/html"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/admin/products": {
+      "get": {
+        "tags": [
+          "The Admin Front-End Endpoints"
+        ],
+        "description": "<h3>Renders the products page if the token owner has an admin role. If any of the <b>product</b>, <b>categories</b> and <b>brands</b> request parameters are provided then renders the product page with a filtered product list. If not admin then returns the login page back to the user.</h3>",
+        "produces": [
+          "text/html"
+        ],
+        "parameters": [
+          {
+            "name": "product",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "categories",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "brands",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/admin/brands": {
+      "get": {
+        "tags": [
+          "The Admin Front-End Endpoints"
+        ],
+        "description": "<h3>Renders the brands page if the token owner has an admin role. If not admin then returns the login page back to the user.</h3>",
+        "produces": [
+          "text/html"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/admin/categories": {
+      "get": {
+        "tags": [
+          "The Admin Front-End Endpoints"
+        ],
+        "description": "<h3>Renders the categories page if the token owner has an admin role. If not admin then returns the login page back to the user.</h3>",
+        "produces": [
+          "text/html"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/admin/users": {
+      "get": {
+        "tags": [
+          "The Admin Front-End Endpoints"
+        ],
+        "description": "<h3>Renders the users page if the token owner has an admin role. If not admin then returns the login page back to the user.</h3>",
+        "produces": [
+          "text/html"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/admin/orders": {
+      "get": {
+        "tags": [
+          "The Admin Front-End Endpoints"
+        ],
+        "description": "<h3>Renders the orders page if the token owner has an admin role. If not admin then returns the login page back to the user.</h3>",
+        "produces": [
+          "text/html"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "userLogin": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "example": "Admin"
+        },
+        "username": {
+          "type": "string",
+          "example": "Admin"
+        },
+        "password": {
+          "type": "string",
+          "example": "P@ssword2023"
+        }
+      },
+      "required": [
+        "email",
+        "username",
+        "password"
+      ]
+    },
+    "newUserRegister": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "example": "JohnDoe"
+        },
+        "email": {
+          "type": "string",
+          "example": "JohnDoe@gmail.com"
+        },
+        "password": {
+          "type": "string",
+          "example": "P4ssw0rd"
+        },
+        "firstname": {
+          "type": "string",
+          "example": "John"
+        },
+        "lastname": {
+          "type": "string",
+          "example": "Doe"
+        },
+        "address": {
+          "type": "string",
+          "example": "Oslo, Norway"
+        },
+        "telephonenumber": {
+          "type": "string",
+          "example": "99999999"
+        }
+      },
+      "required": [
+        "username",
+        "email",
+        "password",
+        "firstname",
+        "lastname",
+        "address",
+        "telephonenumber"
+      ]
+    },
+    "productSearch": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "iPhone 6s Plus 16Gb"
+        },
+        "brand": {
+          "type": "string",
+          "example": "Apple"
+        },
+        "category": {
+          "type": "string",
+          "example": "Phones"
+        }
+      },
+      "required": [
+        "name",
+        "brand",
+        "category"
+      ]
+    },
+    "userChange": {
+      "type": "object",
+      "properties": {
+        "userid": {
+          "type": "number",
+          "example": 1
+        },
+        "firstname": {
+          "type": "string",
+          "example": "Jane"
+        },
+        "lastname": {
+          "type": "string",
+          "example": "Doe"
+        },
+        "address": {
+          "type": "string",
+          "example": "Oslo, Norway"
+        },
+        "telephonenumber": {
+          "type": "string",
+          "example": "88888888"
+        },
+        "roleid": {
+          "type": "number",
+          "example": 2
+        }
+      },
+      "required": [
+        "userid",
+        "firstname",
+        "lastname",
+        "address",
+        "telephonenumber",
+        "roleid"
+      ]
+    },
+    "userDelete": {
+      "type": "object",
+      "properties": {
+        "userid": {
+          "type": "number",
+          "example": 1
+        }
+      },
+      "required": [
+        "userid"
+      ]
+    },
+    "roleCreate": {
+      "type": "object",
+      "properties": {
+        "role": {
+          "type": "string",
+          "example": "User"
+        }
+      },
+      "required": [
+        "role"
+      ]
+    },
+    "roleChange": {
+      "type": "object",
+      "properties": {
+        "roleid": {
+          "type": "number",
+          "example": 2
+        },
+        "role": {
+          "type": "string",
+          "example": "Admin"
+        }
+      },
+      "required": [
+        "roleid",
+        "role"
+      ]
+    },
+    "roleDelete": {
+      "type": "object",
+      "properties": {
+        "roleid": {
+          "type": "number",
+          "example": 2
+        }
+      },
+      "required": [
+        "roleid"
+      ]
+    },
+    "categoryCreate": {
+      "type": "object",
+      "properties": {
+        "category": {
+          "type": "string",
+          "example": "Phones"
+        }
+      },
+      "required": [
+        "category"
+      ]
+    },
+    "categoryChange": {
+      "type": "object",
+      "properties": {
+        "categoryid": {
+          "type": "number",
+          "example": 2
+        },
+        "category": {
+          "type": "string",
+          "example": "Phones"
+        }
+      },
+      "required": [
+        "categoryid",
+        "category"
+      ]
+    },
+    "categoryDelete": {
+      "type": "object",
+      "properties": {
+        "categoryid": {
+          "type": "number",
+          "example": 2
+        }
+      },
+      "required": [
+        "categoryid"
+      ]
+    },
+    "brandCreate": {
+      "type": "object",
+      "properties": {
+        "brand": {
+          "type": "string",
+          "example": "Apple"
+        }
+      },
+      "required": [
+        "brand"
+      ]
+    },
+    "brandChange": {
+      "type": "object",
+      "properties": {
+        "brandid": {
+          "type": "number",
+          "example": 2
+        },
+        "brand": {
+          "type": "string",
+          "example": "Apple"
+        }
+      },
+      "required": [
+        "brandid",
+        "brand"
+      ]
+    },
+    "brandDelete": {
+      "type": "object",
+      "properties": {
+        "brandid": {
+          "type": "number",
+          "example": 2
+        }
+      },
+      "required": [
+        "brandid"
+      ]
+    },
+    "membershipCreate": {
+      "type": "object",
+      "properties": {
+        "membership": {
+          "type": "string",
+          "example": "Gold"
+        }
+      },
+      "required": [
+        "membership"
+      ]
+    },
+    "membershipChange": {
+      "type": "object",
+      "properties": {
+        "membershipid": {
+          "type": "number",
+          "example": 2
+        },
+        "membership": {
+          "type": "string",
+          "example": "Gold"
+        },
+        "discount": {
+          "type": "number",
+          "example": 30
+        }
+      },
+      "required": [
+        "membershipid",
+        "membership",
+        "discount"
+      ]
+    },
+    "membershipDelete": {
+      "type": "object",
+      "properties": {
+        "membershipid": {
+          "type": "number",
+          "example": 2
+        }
+      },
+      "required": [
+        "membershipid"
+      ]
+    },
+    "productCreate": {
+      "type": "object",
+      "properties": {
+        "product": {
+          "type": "string",
+          "example": "XXX"
+        },
+        "description": {
+          "type": "string",
+          "example": "XXX"
+        },
+        "unitprice": {
+          "type": "number",
+          "example": 0
+        },
+        "imgurl": {
+          "type": "string",
+          "example": "XXX"
+        },
+        "quantity": {
+          "type": "number",
+          "example": 0
+        },
+        "brandid": {
+          "type": "number",
+          "example": 1
+        },
+        "categoryid": {
+          "type": "number",
+          "example": 1
+        }
+      },
+      "required": [
+        "product",
+        "description",
+        "unitprice",
+        "imgurl",
+        "quantity",
+        "brandid",
+        "categoryid"
+      ]
+    },
+    "productChange": {
+      "type": "object",
+      "properties": {
+        "productid": {
+          "type": "number",
+          "example": 1
+        },
+        "product": {
+          "type": "string",
+          "example": "XXX"
+        },
+        "description": {
+          "type": "string",
+          "example": "XXX"
+        },
+        "unitprice": {
+          "type": "number",
+          "example": 0
+        },
+        "imgurl": {
+          "type": "string",
+          "example": "XXX"
+        },
+        "quantity": {
+          "type": "number",
+          "example": 0
+        },
+        "isdeleted": {
+          "type": "number",
+          "example": 1
+        },
+        "brandid": {
+          "type": "number",
+          "example": 1
+        },
+        "categoryid": {
+          "type": "number",
+          "example": 1
+        }
+      },
+      "required": [
+        "productid",
+        "product",
+        "description",
+        "unitprice",
+        "imgurl",
+        "quantity",
+        "isdeleted",
+        "brandid",
+        "categoryid"
+      ]
+    },
+    "productDelete": {
+      "type": "object",
+      "properties": {
+        "productid": {
+          "type": "number",
+          "example": 1
+        }
+      },
+      "required": [
+        "productid"
+      ]
+    },
+    "cartItemCreate": {
+      "type": "object",
+      "properties": {
+        "productid": {
+          "type": "number",
+          "example": 1
+        },
+        "quantity": {
+          "type": "number",
+          "example": 1
+        }
+      },
+      "required": [
+        "productid",
+        "quantity"
+      ]
+    },
+    "cartItemQuantiyChange": {
+      "type": "object",
+      "properties": {
+        "cartitemid": {
+          "type": "number",
+          "example": 1
+        },
+        "quantity": {
+          "type": "number",
+          "example": 1
+        }
+      },
+      "required": [
+        "cartitemid",
+        "quantity"
+      ]
+    },
+    "cartItemDelete": {
+      "type": "object",
+      "properties": {
+        "cartitemid": {
+          "type": "number",
+          "example": 1
+        }
+      },
+      "required": [
+        "cartitemid"
+      ]
+    },
+    "orderStatusUpdate": {
+      "type": "object",
+      "properties": {
+        "ordernumber": {
+          "type": "string",
+          "example": "qvj79w0b"
+        },
+        "orderstatusid": {
+          "type": "number",
+          "example": 2
+        }
+      },
+      "required": [
+        "ordernumber",
+        "orderstatusid"
+      ]
+    },
+    "orderStatusCreate": {
+      "type": "object",
+      "properties": {
+        "orderstatus": {
+          "type": "string",
+          "example": "Ordered"
+        }
+      },
+      "required": [
+        "orderstatus"
+      ]
+    },
+    "orderStatusChange": {
+      "type": "object",
+      "properties": {
+        "orderstatusid": {
+          "type": "number",
+          "example": 2
+        },
+        "orderstatus": {
+          "type": "string",
+          "example": "Completed"
+        }
+      },
+      "required": [
+        "orderstatusid",
+        "orderstatus"
+      ]
+    },
+    "orderStatusDelete": {
+      "type": "object",
+      "properties": {
+        "orderstatusid": {
+          "type": "number",
+          "example": 2
+        }
+      },
+      "required": [
+        "orderstatusid"
+      ]
+    }
+  }
+}

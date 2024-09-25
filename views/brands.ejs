@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="eng">
+<head>
+  <title>Brands</title>
+  <%-include('./partials/head.ejs')%>
+</head>
+
+<body>
+  <%-include('./partials/navbar.ejs')%>
+
+  <div class="container-fluid pt-5 pb-3 mt-5 mb-3">
+    <h class="pr-3" style="display:inline; float: inline-start;"><h2 class="d-inline">Brands</h2><h6 class="p-2 text-muted d-inline">Manage brands for products</h6></h>
+    <h class="p-3" style="display:inline; float: inline-end;"><a href="/" style="text-decoration: none; color: black;"><h6 class="d-inline">Home</h6></a><h6 class="d-inline text-muted"> / Brands</h6></h>
+  </div>
+
+  <%if(brands) {%>
+    <div class="container-fluid pt-3 mt-3" style="display:inline; float: inline-end;">
+      <div class="pe-4 pb-1" style="display:inline; float: inline-end;">
+        <button id="submit" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAdd"><i class="bi bi-plus-lg"></i> Add</button>
+      </div>
+    </div>
+  <%}%>
+
+  <div class="modal fade" tabindex="-1" role="dialog" id="modalAdd">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add a new brand</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal">
+          </button>
+        </div>
+        <div class="modal-body">
+          <form action="javascript: addBrand($('#nameAdd').val(), '<%=token%>')">
+            <div class="mb-3">
+              <label for="nameAdd" class="col-form-label">Name</label>
+              <input  id="nameAdd" name="nameAdd" class="form-control" minlength="1" maxlength="255" required>
+            </div>
+
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-primary">Add brand</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-fluid">
+      <div class="row px-3 py-1 w-100 text-light text-center">
+        <span class="col py-1 bg-dark">Id</span>
+        <span class="col-3 py-1 bg-dark">Name</span>
+        <span class="col py-1 bg-dark">Options</span>
+      </div>
+
+      <%if(brands) {%>
+        <%brands.forEach(function(brand) {%>
+          <div class="row px-3 py-1 w-100 text-center align-middle">
+            <span class="col py-1 bg-light text-center align-middle">
+              <%=brand.brandid%>
+            </span>
+            <span class="col-3 py-1 bg-light text-center align-middle">
+              <%=brand.brand%>
+            </span>
+            <span class="col py-1 bg-light text-center">
+              <button class="btn btn-sm btn-outline-dark" type="button" data-bs-toggle="modal" data-bs-target="#modal<%=brand.brandid%>"><i class="bi bi-pencil-fill"></i></button>
+              <button class="btn btn-sm btn-outline-dark" type="button" onclick="deleteBrand('<%=brand.brandid%>', '<%=token%>')"><i class="bi bi-trash3-fill"></i></button>
+            </span>
+          </div>
+  
+          <div class="modal fade" tabindex="-1" role="dialog" id="modal<%=brand.brandid%>">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Edit brand details</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal">
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <form action="javascript: changeBrand(
+                    $('#idEdit<%=brand.brandid%>').val(), 
+                    $('#nameEdit<%=brand.brandid%>').val(), 
+                    '<%=token%>'
+                  )">
+                    <div class="mb-3">
+                      <label for="idEdit<%=brand.brandid%>" class="col-form-label">Id</label>
+                      <input id="idEdit<%=brand.brandid%>" name="idEdit<%=brand.brandid%>" class="form-control" value="<%=brand.brandid%>" disabled readonly>
+                    </div>
+  
+                    <div class="mb-3">
+                      <label for="nameEdit<%=brand.brandid%>" class="col-form-label">Name</label>
+                      <input  id="nameEdit<%=brand.brandid%>" name="nameEdit<%=brand.brandid%>" class="form-control" minlength="1" maxlength="255" value="<%=brand.brand%>" required>
+                    </div>
+  
+                    <div class="modal-footer">
+                      <button type="submit" class="btn btn-primary">Save changes</button>
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        <%});%>
+      <%} else {%>
+        <div class="row px-3 py-1 w-100">
+          <span class="col py-1"></span>
+          <span class="col py-1"></span>
+          <span class="col py-1"></span>
+        </div>
+      <%}%>
+
+      <div class="row px-3 py-2 w-100 text-center">
+        <hr>
+      </div>
+  </div>
+
+  <div class="modal fade" tabindex="-1" role="dialog" id="modalDuplicateError">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Error</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal">
+          </button>
+        </div>
+        <div class="modal-body">
+          <h>There already exists such brand, try a different name.</h>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" tabindex="-1" role="dialog" id="modalCannotRemoveError">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Error</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal">
+          </button>
+        </div>
+        <div class="modal-body">
+          <h>Cannot remove the brand! There exists one or more products related to this brand!</h>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <%-include('./partials/scripts.ejs')%>
+</body>
+</html>
